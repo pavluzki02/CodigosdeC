@@ -10,9 +10,10 @@
 - [Búsqueda Lineal](#-búsqueda-lineal)
 - [Búsqueda Binaria](#-búsqueda-binaria)
 - [Búsqueda Binaria con Eliminación de Elemento](#-búsqueda-binaria-con-eliminación-de-elemento)
-- [Ordenamiento Burbuja](#-ordenamiento-burbuja)
-- [Ordenamiento Inserción](#-ordenamiento-inserción)
-- [Ordenamiento Selección](#-ordenamiento-selección)
+- [Swap (Intercambio)](#-swap-intercambio)
+- [Ordenamiento Burbuja (Bubble Sort)](#-ordenamiento-burbuja-bubble-sort)
+- [Ordenamiento Inserción (Insertion Sort)](#-ordenamiento-inserción-insertion-sort)
+- [Ordenamiento Selección (Selection Sort)](#-ordenamiento-selección-selection-sort)
 - [Cadenas](#-cadenas)
 - [Matrices](#-matrices)
 - [Funciones](#-funciones)
@@ -263,9 +264,50 @@ int main() {
 
 ---
 
-## 🫧 Ordenamiento Burbuja
+## 🔄 Swap (Intercambio)
 
-El método burbuja compara elementos **adyacentes** e intercambia los que están en el orden incorrecto, repitiendo el proceso hasta que el arreglo queda ordenado.
+El **swap** es la operación de **intercambiar los valores de dos variables**. Es la operación fundamental que usan los algoritmos de ordenamiento (Burbuja y Selección) para mover elementos a su posición correcta.
+
+Para intercambiar dos variables se necesita una **variable auxiliar temporal** (`temp`). Sin ella, uno de los valores se perdería.
+
+```c
+int a = 5, b = 10;
+
+// ✅ CORRECTO: usando variable auxiliar
+int temp = a;  // temp = 5
+a = b;         // a = 10
+b = temp;      // b = 5
+
+printf("a=%d, b=%d\n", a, b);  // a=10, b=5
+```
+
+```c
+// ❌ INCORRECTO: sin auxiliar (se pierde el valor de a)
+a = b;  // a = 10 (el 5 original se pierde)
+b = a;  // b = 10 (ya no hay forma de recuperar el 5)
+```
+
+Como función reutilizable (requiere punteros):
+
+```c
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+int a = 3, b = 7;
+swap(&a, &b);
+printf("a=%d, b=%d\n", a, b);  // a=7, b=3
+```
+
+---
+
+## 🫧 Ordenamiento Burbuja (Bubble Sort)
+
+El **Bubble Sort** (o método burbuja) es un algoritmo de ordenamiento que compara elementos **adyacentes** e intercambia los que están en el orden incorrecto, repitiendo el proceso hasta que el arreglo queda completamente ordenado.
+
+**¿Por qué se llama "burbuja"?** Porque los elementos más grandes "burbujean" hacia el final del arreglo en cada pasada, igual que las burbujas suben al tope de un líquido.
 
 ```c
 #include <stdio.h>
@@ -311,9 +353,9 @@ El ordenamiento se realiza **mediante un determinado criterio de ordenamiento** 
 
 ---
 
-## 📥 Ordenamiento Inserción
+## 📥 Ordenamiento Inserción (Insertion Sort)
 
-Toma cada elemento y lo **inserta en la posición correcta** dentro de la parte ya ordenada del arreglo.
+El **Insertion Sort** es un algoritmo de ordenamiento que divide el arreglo conceptualmente en dos partes: una parte **ya ordenada** (izquierda) y una parte **sin ordenar** (derecha). En cada paso, toma el primer elemento de la parte sin ordenar y lo **inserta en la posición correcta** dentro de la parte ordenada, desplazando los demás hacia la derecha si es necesario.
 
 ```c
 #include <stdio.h>
@@ -354,9 +396,11 @@ Es como ordenar cartas en la mano: tomás una carta nueva y la colocás en el lu
 
 ---
 
-## 🎯 Ordenamiento Selección
+## 🎯 Ordenamiento Selección (Selection Sort)
 
-Busca el **elemento mínimo** del arreglo no ordenado y lo coloca en la posición correcta.
+El **Selection Sort** es un algoritmo de ordenamiento que en cada pasada **busca el elemento mínimo** del segmento no ordenado del arreglo y lo coloca en su posición definitiva mediante un swap. Repite este proceso hasta que todo el arreglo queda ordenado.
+
+**Idea clave:** en cada iteración "selecciona" el menor elemento restante y lo pone donde corresponde.
 
 ```c
 #include <stdio.h>
@@ -398,11 +442,11 @@ int main() {
 
 ### Comparación de métodos
 
-| Método | Estrategia | Estabilidad |
-|--------|------------|-------------|
-| Burbuja | Compara adyacentes | Estable |
-| Inserción | Inserta en posición correcta | Estable |
-| Selección | Busca el mínimo y lo ubica | No estable |
+| Método | Definición | Estrategia | Usa Swap |
+|--------|------------|------------|----------|
+| **Bubble Sort** | Compara pares de elementos adyacentes y los intercambia si están en orden incorrecto, "burbujeando" los mayores al final | Compara adyacentes | ✅ Sí |
+| **Insertion Sort** | Toma cada elemento de la parte no ordenada y lo inserta en su posición correcta dentro de la parte ya ordenada | Desplaza e inserta | ❌ Desplaza |
+| **Selection Sort** | En cada pasada busca el elemento mínimo del segmento no ordenado y lo intercambia con el primero de ese segmento | Busca mínimo y ubica | ✅ Sí |
 
 ---
 
@@ -411,6 +455,45 @@ int main() {
 En C, una cadena es un **arreglo de caracteres (`char`)** que termina con el carácter nulo `'\0'`.
 
 > ⚠️ Una cadena **no se puede ordenar** aplicando cualquier método de ordenamiento que se utiliza para ordenar un arreglo de enteros directamente. Se requiere usar `strcmp()` para comparar.
+
+### El carácter nulo `'\0'`
+
+`'\0'` es el **carácter nulo** (valor ASCII 0) que marca el **fin de una cadena** en C. Toda cadena de texto termina con este carácter de forma automática cuando se usa una cadena literal.
+
+```c
+char saludo[] = "Hola";
+// En memoria se almacena: 'H' 'o' 'l' 'a' '\0'
+// El arreglo ocupa 5 posiciones, no 4
+```
+
+> ⚠️ Si olvidás el `'\0'`, las funciones de cadena como `printf("%s")` o `strlen()` seguirán leyendo memoria hasta encontrar un 0, causando comportamiento impredecible.
+
+```c
+// Forma manual de poner el terminador
+char nombre[6];
+nombre[0] = 'J';
+nombre[1] = 'u';
+nombre[2] = 'a';
+nombre[3] = 'n';
+nombre[4] = '\0';  // ← imprescindible
+```
+
+### El especificador `%s`
+
+`%s` es el **especificador de formato para cadenas** en `printf` y `scanf`. Le indica a la función que debe leer o imprimir una cadena de caracteres (hasta encontrar `'\0'`).
+
+```c
+char nombre[] = "Juan";
+
+printf("%s\n", nombre);        // Imprime: Juan
+printf("Hola, %s!\n", nombre); // Imprime: Hola, Juan!
+
+// Leer una cadena (sin espacios)
+char ciudad[20];
+scanf("%s", ciudad);   // Lee hasta el primer espacio o Enter
+```
+
+> ⚠️ `scanf("%s")` **no lee espacios**. Para leer una línea completa con espacios, se usa `fgets()`.
 
 ### Declaración
 
@@ -427,13 +510,98 @@ char ciudad[] = "Resistencia";
 
 | Función | Descripción |
 |---------|-------------|
-| `strlen(s)` | Devuelve la longitud de la cadena |
-| `strcpy(dest, src)` | Copia `src` en `dest` |
-| `strcmp(s1, s2)` | Compara una cadena con otra; retorna 0 si son iguales |
-| `strcat(dest, src)` | Concatena `src` al final de `dest` |
-| `strchr(s, c)` | Localiza la primera instancia de un carácter dentro de un string |
+| `strlen(s)` | Devuelve la **longitud** de la cadena (sin contar el `'\0'`) |
+| `strcpy(dest, src)` | **Copia** el contenido de `src` en `dest` |
+| `strcmp(s1, s2)` | **Compara** dos cadenas; retorna 0 si son iguales, negativo si `s1 < s2`, positivo si `s1 > s2` |
+| `strcat(dest, src)` | **Concatena** (une) `src` al final de `dest` |
+| `strchr(s, c)` | Localiza la **primera instancia** de un carácter dentro de un string |
+| `fgets(dest, n, stdin)` | Lee una línea completa **incluyendo espacios** |
 | `strupr(s)` | Convierte a mayúsculas |
 | `strlwr(s)` | Convierte a minúsculas |
+
+---
+
+### Definiciones detalladas
+
+#### `strlen(s)`
+
+Devuelve la cantidad de caracteres de la cadena **sin contar el `'\0'`**.
+
+```c
+#include <string.h>
+
+char texto[] = "Hola";
+int largo = strlen(texto);
+printf("%d\n", largo);  // Imprime: 4
+```
+
+#### `strcpy(dest, src)`
+
+**Copia** la cadena `src` (fuente) dentro de `dest` (destino), incluyendo el `'\0'` final. En C no se puede asignar una cadena con `=` directamente, por eso se usa `strcpy`.
+
+```c
+#include <string.h>
+
+char destino[20];
+strcpy(destino, "Juan");
+printf("%s\n", destino);  // Imprime: Juan
+
+// ❌ INCORRECTO en C:
+// destino = "Juan";  → error de compilación
+```
+
+#### `strcmp(s1, s2)`
+
+**Compara** dos cadenas carácter por carácter (según su valor ASCII).
+
+| Resultado | Significado |
+|-----------|-------------|
+| `0` | Las cadenas son **iguales** |
+| `< 0` | `s1` es **menor** que `s2` (alfabéticamente anterior) |
+| `> 0` | `s1` es **mayor** que `s2` (alfabéticamente posterior) |
+
+```c
+#include <string.h>
+
+char a[] = "Juan";
+char b[] = "Juan";
+char c[] = "Ana";
+
+if (strcmp(a, b) == 0) printf("Iguales\n");       // ✓ Iguales
+if (strcmp(c, a) < 0)  printf("Ana va antes\n");  // ✓ Ana < Juan
+```
+
+#### `strcat(dest, src)`
+
+**Concatena** (une) la cadena `src` al final de `dest`. El destino debe tener suficiente espacio para albergar ambas cadenas.
+
+```c
+#include <string.h>
+
+char saludo[30] = "Hola, ";
+strcat(saludo, "Mundo!");
+printf("%s\n", saludo);  // Imprime: Hola, Mundo!
+```
+
+#### `fgets(dest, n, stdin)`
+
+Lee una línea completa desde el teclado, **incluyendo espacios**, hasta `n-1` caracteres. Es la alternativa segura a `scanf("%s")` cuando la entrada puede contener espacios.
+
+```c
+#include <stdio.h>
+
+char nombre[50];
+printf("Ingresá tu nombre completo: ");
+fgets(nombre, 50, stdin);
+printf("Nombre: %s", nombre);
+// Entrada: "Juan Perez"
+// Salida:  "Nombre: Juan Perez"
+```
+
+> 💡 `fgets` incluye el `'\n'` (Enter) al final de la cadena. Si molesta, se puede eliminar así:
+> ```c
+> nombre[strcspn(nombre, "\n")] = '\0';
+> ```
 
 ### Funciones de clasificación de caracteres (`<ctype.h>`)
 
@@ -977,9 +1145,10 @@ El 9 está en la posición 3
 | Arreglo | Conjunto finito, ordenado y homogéneo. Índices desde 0 |
 | Búsqueda lineal | Recorre todo el arreglo; sirve para arreglos no ordenados |
 | Búsqueda binaria | Solo para arreglos ordenados; muy eficiente |
-| Burbuja | Compara elementos adyacentes e intercambia |
-| Inserción | Inserta cada elemento en su lugar correcto |
-| Selección | Busca el mínimo y lo coloca en su posición |
+| Swap | Intercambio de dos valores usando una variable auxiliar `temp` |
+| Bubble Sort | Compara e intercambia elementos adyacentes hasta ordenar |
+| Insertion Sort | Inserta cada elemento en su posición dentro de la parte ordenada |
+| Selection Sort | Busca el mínimo en cada pasada y lo coloca en su posición definitiva |
 | Cadenas | Arreglo de `char` terminado en `'\0'`; usar `strcmp` para comparar |
 | Matrices | Arreglo 2D; `mat[fila][columna]`, índices desde 0 |
 | Funciones | Reutilizables; `return` fuerza salida inmediata |
